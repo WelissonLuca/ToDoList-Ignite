@@ -8,18 +8,45 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// const users = [];
+const users = [];
 
 function checksExistsUserAccount(request, response, next) {
-  // Complete aqui
+  const { username } = request.header;
+
+  const user = users.find(user => user.username === username)
+
+  if(!username)
+    return response.status(400).json({error: "user not exists"})
+  request.user = user;
+
+  return next();
 }
 
-app.post('/users', (request, response) => {
-  // Complete aqui
+app.post('/users',(request, response) => {
+  const {name , username } = request.body;
+
+  const user = users.some(user => user.username === username);
+
+  if(user)
+    return response.status(400).json({error: "user already exists!"})
+  
+    users.push({
+    id: 'uuid', // precisa ser um uuid
+    name: 'Danilo Vieira', 
+    username: 'danilo', 
+    todos: []
+  });
+
+  return response.status(201).send("Create User Complete");
+
+
 });
 
 app.get('/todos', checksExistsUserAccount, (request, response) => {
-  // Complete aqui
+  const user = req;
+
+   
+  return response.status(201).json(user)
 });
 
 app.post('/todos', checksExistsUserAccount, (request, response) => {
@@ -37,5 +64,7 @@ app.patch('/todos/:id/done', checksExistsUserAccount, (request, response) => {
 app.delete('/todos/:id', checksExistsUserAccount, (request, response) => {
   // Complete aqui
 });
+
+
 
 module.exports = app;
