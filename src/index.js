@@ -15,7 +15,7 @@ function checksExistsUserAccount(request, response, next) {
 
 	const user = users.find((user) => user.username === username);
 
-	if (!user) {return response.status(400).json({ error: "user not exists" })};
+	if (!user) return response.status(400).json({ error: "user not exists" });
 
 	request.user = user;
 
@@ -27,9 +27,9 @@ app.post("/users", (request, response) => {
 
 	const userAlredyExists = users.find((user) => user.username === username);
 
-	if (userAlredyExists){
+	if (userAlredyExists)
 		return response.status(400).json({ error: "user already exists!" });
-  }
+
 	const newUser = {
 		id: uuidv4(),
 		name,
@@ -48,9 +48,8 @@ app.get("/todos", checksExistsUserAccount, (request, response) => {
 });
 
 app.post("/todos", checksExistsUserAccount, (request, response) => {
-  const { user } = request;
-  const { title, deadline } = request.body;
-
+	const { user } = request;
+	const { title, deadline } = request.body;
 
 	const todo = {
 		id: uuidv4(),
@@ -67,17 +66,16 @@ app.post("/todos", checksExistsUserAccount, (request, response) => {
 
 app.put("/todos/:id", checksExistsUserAccount, (request, response) => {
 	const { user } = request;
-  const { title, deadline } = request.body;
-  const { id } = request.params;
-	
-	
+	const { title, deadline } = request.body;
+	const { id } = request.params;
+
 	const todo = user.todos.find((todo) => todo.id === id);
 
 	if (!todo)
-		{return response
+		return response
 			.status(404)
 			.json({ error: "Couldnt find todo with the passed ID" });
-    }
+
 	todo.title = title;
 	todo.deadline = new Date(deadline);
 
@@ -85,16 +83,16 @@ app.put("/todos/:id", checksExistsUserAccount, (request, response) => {
 });
 
 app.patch("/todos/:id/done", checksExistsUserAccount, (request, response) => {
-  const { user } = request;
+	const { user } = request;
 	const { id } = request.params;
 
 	const todo = user.todos.find((todo) => todo.id === id);
 
 	if (!todo)
-		{return response
+		return response
 			.status(404)
 			.json({ error: "Couldnt find todo with the passed ID" });
-    }
+
 	todo.done = true;
 
 	return response.json(todo);
@@ -102,15 +100,15 @@ app.patch("/todos/:id/done", checksExistsUserAccount, (request, response) => {
 
 app.delete("/todos/:id", checksExistsUserAccount, (request, response) => {
 	const { user } = request;
-  const { id } = request.params;
-	
+	const { id } = request.params;
+
 	const todo = user.todos.find((todo) => todo.id === id);
 
 	if (!todo)
-		{return response
+		return response
 			.status(404)
 			.json({ error: "Couldnt find todo with the passed ID" });
-    }
+
 	user.todos.splice(todo, 1);
 
 	return response.status(204).json(user.todos);
